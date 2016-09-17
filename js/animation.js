@@ -1,6 +1,10 @@
 $(document).ready(function() {
 
-  $('#tweet-submit, #char-count').css('display', 'none');
+  $(".timeago").timeago();
+
+  var tweetClicked = false;
+
+  $('#tweet-submit, #char-count, .tweet-actions, .stats').css('display', 'none');
 
   $('.tweet-compose').focus(function(){
     $(this).css({
@@ -27,42 +31,55 @@ $(document).ready(function() {
     });
   });
 
-  // $('.tweet-compose').focusout(function(){
-  //   $(this).attr('style','');
-  //   $('#tweet-submit, #char-count').hide();
-  // });
+  $('#tweet-submit').mouseup(function(){
+    var newTweetTxt = $('.tweet-compose').val();
+    if(newTweetTxt.length <= 0) {
+      // $('#tweet-content > .tweet-compose').val('No tweet entered.');
+      // $('.tweet-compose').css('color', 'red');
+      alert('No text entered.');
+    }
+    addTweet(newTweetTxt);
+  });
 
-  // var addTweet = function(tweet) {
+  var addTweet = function(tweet) {
+    var avatar = $('#profile-summary .content .avatar').attr('src');
+    var name = $('#profile-summary .name').text();
+    var user = '@bobby_mcgee';
+    if(tweet) {
+      $('#stream').prepend(
+                    '<div class="tweet">' +
+                      '<div class="content">'+
+                        '<img class="avatar" src="'+avatar+'" />' +
+                        '<strong class="fullname">'+name+'</strong>' +
+                        '<span class="username">'+user+'</span>' +
+                        '<p class="tweet-text">' +
+                          tweet +
+                        '</p>' +
+                      '</div>' +
+                    '</div>'
+                  );
+    }
+  };
 
-    $('#tweet-submit').mouseup(function(){
-      var newTweetTxt = $('.tweet-compose').val();
-      if(newTweetTxt.length <= 0) {
-        // $('#tweet-content > .tweet-compose').val('No tweet entered.');
-        // $('.tweet-compose').css('color', 'red');
-        alert('No text entered.');
-      }
-      addTweet(newTweetTxt);
-    });
+  $('.tweet .content').hover(function(){
+    $('.tweet-actions', this).show();
+  }, function(){
+    $('.tweet-actions', this).hide();
+  });
 
-    var addTweet = function(tweet) {
-      var avatar = $('#profile-summary .content .avatar').attr('src');
-      if(tweet) {
-        alert(avatar);
-        $('#stream').prepend(
-                      '<div class="tweet">' +
-                        '<div class="content">'+
-                          '<img class="avatar" src="'+avatar+'" />' +
-                          '<p class="tweet-text">' +
-                            tweet +
-                          '</p>' +
-                        '</div>' +
-                      '</div>'
-                    );
-      }
-    };
+  var hideStats = function(tweetClicked) {
+      $('.tweet .content').hover(function(){
+        $('.stats', this).slideUp('slow');
+        tweetClicked = false;
+      });
+  };
+
+  $('.tweet .content').click(function(){
+    // $timeago($('time .datetime'));
+    $('.stats', this).slideDown('slow');
+    tweetClicked = true;
+    hideStats();
+  });
 
 
 });
-
-
-// (charCount > 10)
